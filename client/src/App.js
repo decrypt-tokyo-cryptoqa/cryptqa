@@ -5,7 +5,10 @@ import getWeb3 from "./utils/getWeb3";
 import "./App.css";
 
 class App extends Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null };
+  constructor() {
+    super();
+    this.state = { storageValue: 0, web3: null, accounts: null, contract: null };
+  }
 
   componentDidMount = async () => {
     try {
@@ -35,13 +38,40 @@ class App extends Component {
     }
   };
 
+  handleChange = name => event => {
+    this.setState({ [name]: event.target.value });
+  };
+
   render() {
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
       <div className="App">
-        
+        <header>
+          <h1>Crypto QA</h1>
+        </header>
+        <div className="ask">
+        <h2>質問内容を入力して下さい</h2>
+        <h3>Please enter your question</h3>
+        </div>
+       <div className="quest"> 
+         <textarea name="name" rows="8" cols="80" onChange={this.handleChange('q1')}></textarea>
+         </div>
+       <div className="quest"> 
+         <textarea name="name" rows="8" cols="80" onChange={this.handleChange('q2')}></textarea>
+       </div>
+       <div className="quest"> 
+         <textarea name="name" rows="8" cols="80" onChange={this.handleChange('q3')}></textarea>
+       </div>
+
+       <div className="add"> 
+         <i className="far fa-plus-square"></i>
+       </div>
+
+       <div className="btn"> 
+         <a href="#" className="btn-square">OK</a>
+       </div>
       </div>
     );
   }
