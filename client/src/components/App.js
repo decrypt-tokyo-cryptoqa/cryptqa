@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import Contract from "./cryptoQA.json";
-import getWeb3 from "./utils/getWeb3";
+import Contract from "../cryptoQA.json";
+import getWeb3 from "../utils/getWeb3";
 
-import "./App.css";
+import "../App.css";
 
 class App extends Component {
   constructor() {
     super();
-    this.state = { storageValue: 0, web3: null, accounts: null, contract: null };
+    this.state = { storageValue: 0, web3: null, accounts: null, contract: null, items: ["q1", "q2", "q3"]};
   }
 
   componentDidMount = async () => {
@@ -42,6 +42,13 @@ class App extends Component {
     this.setState({ [name]: event.target.value });
   };
 
+  addTextarea = async() => {
+    const { items } = this.state;
+    const number = items.length + 1;
+    items.push(`q${number}`)
+    this.setState({ items });
+  }
+
   render() {
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
@@ -55,22 +62,17 @@ class App extends Component {
         <h2>質問内容を入力して下さい</h2>
         <h3>Please enter your question</h3>
         </div>
-       <div className="quest"> 
-         <textarea name="name" rows="8" cols="80" onChange={this.handleChange('q1')}></textarea>
-         </div>
-       <div className="quest"> 
-         <textarea name="name" rows="8" cols="80" onChange={this.handleChange('q2')}></textarea>
-       </div>
-       <div className="quest"> 
-         <textarea name="name" rows="8" cols="80" onChange={this.handleChange('q3')}></textarea>
-       </div>
 
-       <div className="add"> 
+       <ul>
+          {this.state.items.map( (item, i) => {
+            return <div className="quest" key={i}><textarea name="name" rows="8" cols="80" onChange={this.handleChange(`${item}`)}></textarea></div>
+          })}
+        </ul>
+       <div className="add" onClick={this.addTextarea}> 
          <i className="far fa-plus-square"></i>
        </div>
-
        <div className="btn"> 
-         <a href="#" className="btn-square">OK</a>
+         <i className="btn-square">OK</i>
        </div>
       </div>
     );

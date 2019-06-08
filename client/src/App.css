@@ -60,6 +60,13 @@ header h1{
 .add i{
     zoom: 2.8;
     margin-left:68%;
+    color:black;
+}
+
+.add i:active{
+  zoom: 2.8;
+  margin-left:68%;
+  color:#999;
 }
 
 /* OKボタン */
