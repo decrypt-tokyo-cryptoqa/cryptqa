@@ -1,13 +1,17 @@
 import React, { Component } from "react";
 import Contract from "../cryptoQA.json";
 import getWeb3 from "../utils/getWeb3";
+import axios from 'axios';
 
 import "../App.css";
+
+const ROOT_ENDPOINT = 'http://3.217.5.142:3000'
 
 class App extends Component {
   constructor() {
     super();
-    this.state = { storageValue: 0, web3: null, accounts: null, contract: null, items: ["q1", "q2", "q3"]};
+    this.state = { storageValue: 0, web3: null, accounts: null, contract: null, items: ["1", "2", "3"],
+            answers: [], latest_qa_id: null};
   }
 
   componentDidMount = async () => {
@@ -45,8 +49,49 @@ class App extends Component {
   addTextarea = async() => {
     const { items } = this.state;
     const number = items.length + 1;
-    items.push(`q${number}`)
+    items.push(`${number}`)
     this.setState({ items });
+  }
+
+  getLatestId = async() => {
+    const { accounts } = this.state;
+    const result = await axios({
+      method: 'get',
+      url: ROOT_ENDPOINT + `/query/${accounts[0]}`,
+    });
+    this.setState({ latest_qa_id: result.data.qa_id })
+  }
+
+  postData = async() => {
+    const { web3, accounts, answers, items} = this.state;
+    for(var i = 0; i < items.length; i ++) {
+      answers.push(this.state[`${i + 1}`]);
+    }
+
+    await this.getLatestId();
+    const questionId = parseInt(this.state.latest_qa_id) + 1;
+    const qa_url = 'http://localhost:3000/answer' + `/${accounts[0]}/${questionId}`;
+
+    const data =  {
+      qa_id: questionId,
+      qa_url: qa_url,
+      ethereum_address: accounts[0],
+      qa: this.state.answers
+    }
+    
+    const result = await axios({
+      method: 'post',
+      url: ROOT_ENDPOINT + '/create/',
+      data: data
+    })
+
+    console.log(result);
+
+    if(result.statusText === 'OK') {
+      alert(qa_url);
+    } else {
+      alert('送信に失敗しました');
+    }
   }
 
   render() {
@@ -71,7 +116,7 @@ class App extends Component {
        <div className="add" onClick={this.addTextarea}> 
          <i className="far fa-plus-square"></i>
        </div>
-       <div className="btn"> 
+       <div className="btn" onClick={this.postData}> 
          <i className="btn-square">OK</i>
        </div>
       </div>
